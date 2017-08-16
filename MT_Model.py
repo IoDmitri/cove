@@ -36,7 +36,7 @@ class MT_Model(object):
 
     def _run_decoder(self):
         with tf.variable_scope("h_dec_lstm"):
-            h_dec_lstm = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size) for _ in range(self.layers)])
+            h_dec_lstm = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size*2) for _ in range(self.layers)])
 
         with tf.variable_scope("W1") as w1_scope:
             W1 = tf.get_variable("W1", shape=[2*self.hidden_size, self.hidden_size], dtype=tf.float32)
