@@ -35,19 +35,5 @@ class MT_Model(object):
         return tf.concat([fw_encoding, bw_encoding], axis=2)
 
     def _run_decoder(self):
-        with tf.variable_scope("h_dec_lstm"):
-            h_dec_lstm = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size*2) for _ in range(self.layers)])
-
-        with tf.variable_scope("W1") as w1_scope:
-            W1 = tf.get_variable("W1", shape=[2*self.hidden_size, self.hidden_size], dtype=tf.float32)
-            B1 = tf.get_variable("B1", shape=[2*self.hidden_size], dtype=tf.float32)
-
-        with tf.variable_scope("W2") as w2_scope:
-            W2 = tf.get_variable("W2", shape=[self.hidden_size, 2*self.hidden_size], dtype=tf.float32)
-            B2 = tf.get_variable("B2", shape=[self.hidden_size], dtype=tf.float32)
-
-        with tf.variable_scope("Out") as out_scope:
-            out = tf.get_variable("Out", shape=[self.translation_vocab_size, 2 * self.hidden_size], dtype=tf.float32)
-
-        pre_computed_w2_h = tf.matmul(W2, self.encoded_sequence, transpose_b=True)
+        
 
