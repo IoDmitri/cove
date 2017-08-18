@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-class MNTDecoder(tf.contrib.seq2seq.Decoder):
+class NMTDecoder(tf.contrib.seq2seq.Decoder):
     def __init__(self, encoder_outputs, translation_vocab_size, translation_embedding_matrix, batch_size,
                  sos_id, eos_id, decoder_hidden_size=300, encoder_hidden_size=300, layers=2):
         self.encoder_outputs = encoder_outputs
@@ -59,9 +59,9 @@ class MNTDecoder(tf.contrib.seq2seq.Decoder):
             finished = translation_id == self.eos_id
 
         return (
-            tf.contrib.seq2seq.BasicDecoderOutput(decoder_output_context_adjusted, translation_id),
+            tf.contrib.seq2seq.BasicDecoderOutput(translation_vocab_logits, translation_id),
             decoder_output,
-            tf.concat([translation_embedding, decoder_output_context_adjusted], axis =1),
+            tf.concat([translation_embedding, decoder_output_context_adjusted], axis=1),
             finished
         )
 
