@@ -15,6 +15,11 @@ tf.app.flags.DEFINE_integer("dec_h", 300,
                             """
                             the hidden size of the decoder [300]
                             """)
+tf.app.flags.DEFINE_integer("batch_size", 128,
+                            """
+                            The size of the batch to use for training [128]
+                            """)
+
 
 def main(argv=None):
     if FLAGS.mode == "debug":
@@ -29,6 +34,6 @@ def main(argv=None):
 
         initial_sequences = [[choices[np.random.choice(len(choices), 1)[0]] for _ in range(10)] for _ in range(10)]
         initial_targets = [[parallel_dict[letter] for letter in seq] for seq in initial_sequences]
-        
+
 
 
