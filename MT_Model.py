@@ -2,8 +2,8 @@ import tensorflow as tf
 from NMTDecoder import NMTDecoder
 
 class MT_Model(object):
-    def __init__(self, translation_vocab_size, batch_size=128, max_seq_encoder_len = 200, max_seq_decoder_len=200, decoder_output_size=300 ,
-                 input_size=300, hidden_size=300, layers=2, sos_id=1, eos_id=2):
+    def __init__(self, translation_vocab_size, batch_size=128, max_seq_encoder_len = 200, max_seq_decoder_len=200,
+                 decoder_output_size=300, input_size=300, hidden_size=300, layers=2, sos_id=1, eos_id=2):
         self.translation_vocab_size = translation_vocab_size
         self.batch_size = batch_size
         self.max_seq_encoder_len = max_seq_encoder_len
@@ -23,7 +23,7 @@ class MT_Model(object):
             self.translation_embedding_matrix = tf.get_variable("Translation_embedding", shape=[self.translation_vocab_size, self.input_size])
 
     def _add_placeholders(self):
-        self.glove_wordvectors = tf.placeholder(shape=[None, self.max_seq_len, self.input_size], dtype=tf.float32)
+        self.encoded_sequence_placeholder = tf.placeholder(shape=[None, self.max_seq_len, self.input_size], dtype=tf.float32)
         self.labels_placeholder = tf.placeholder(shape=[None, self.max_decoder_seq_len], dtype=tf.float32)
         self.learning_rate_placeholder = tf.placeholder(shape=(), dtype=tf.float32)
 
@@ -43,7 +43,7 @@ class MT_Model(object):
             fw_encoding, bw_encoding, _ = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=forward_lstm_cells,
                 cell_bw=backward_lstm_cells,
-                inputs=self.glove_wordvectors
+                inputs=self.encoded_sequence_placeholder
             )
 
         return tf.concat([fw_encoding, bw_encoding], axis=2)
