@@ -94,9 +94,5 @@ def main(argv=None):
             print(f"train_loss for epoch - {train_loss}")
 
 
-
-
-
-
-
-
+if __name__ == "__main__":
+	main(sys.argv[1:])
