@@ -8,7 +8,6 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
         self.translation_embedding_matrix = translation_embedding_matrix
         self.sos_id = sos_id
         self.eos_id = eos_id
-        print(f"batch_size - {batch_size}")
         self._batch_size = batch_size
         with tf.variable_scope("W1") as w1_scope:
             self.W1 = tf.get_variable("W1", shape=[2 * encoder_hidden_size, decoder_hidden_size], dtype=tf.float32)
