@@ -79,7 +79,7 @@ def main(argv=None):
         initial_sequences = np.array(initial_sequences)
 
         initial_sequences = random_embedding_matrix[initial_sequences, :]
-        
+
         data = (initial_sequences, initial_targets)
 
 

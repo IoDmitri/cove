@@ -14,7 +14,7 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
             self.B1 = tf.get_variable("B1", shape=[2 * encoder_hidden_size], dtype=tf.float32)
 
         with tf.variable_scope("W2") as w2_scope:
-            self.W2 = tf.get_variable("W2", shape=[decoder_hidden_size, 2 * encoder_hidden_size], dtype=tf.float32)
+            self.W2 = tf.get_variable("W2", shape=[2 * encoder_hidden_size, decoder_hidden_size], dtype=tf.float32)
             self.B2 = tf.get_variable("B2", shape=[decoder_hidden_size], dtype=tf.float32)
 
         with tf.variable_scope("Out") as out_scope:
