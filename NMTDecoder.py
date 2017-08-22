@@ -14,14 +14,16 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
             self.B1 = tf.get_variable("B1", shape=[2 * encoder_hidden_size], dtype=tf.float32)
 
         with tf.variable_scope("W2") as w2_scope:
-            self.W2 = tf.get_variable("W2", shape=[2 * encoder_hidden_size, decoder_hidden_size], dtype=tf.float32)
+            self.W2 = tf.get_variable("W2", shape=[decoder_hidden_size, 2 * encoder_hidden_size], dtype=tf.float32)
             self.B2 = tf.get_variable("B2", shape=[decoder_hidden_size], dtype=tf.float32)
 
         with tf.variable_scope("Out") as out_scope:
             self.out = tf.get_variable("Out", shape=[translation_vocab_size, 2 * decoder_hidden_size], dtype=tf.float32)
             self.out_bias = tf.get_variable("Out_Bias", shape=[translation_vocab_size])
 
-        self.encoder_output_projected_cache = tf.matmul(self.W2, encoder_outputs, transpose_b=True)
+        self.encoder_output_projected_cache = tf.reshape(tf.matmul(self.W2, tf.reshape(encoder_outputs, [-1, 2*encoder_hidden_size]),
+                                                                            transpose_b=True), [self.batch_size, -1,
+                                                                                                decoder_hidden_size])
 
         with tf.variable_scope("h_dec_lstm"):
             self.h_dec_lstm_cell = tf.nn.rnn_cell.MultiRNNCell(
