@@ -37,7 +37,7 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
             initial_input = tf.tile(sos_embedding, [self.batch_size, 1])
             print(f"initial_input_lookedup - {initial_input}")
             initial_input = tf.concat([initial_input, tf.zeros([self.batch_size, self.decoder_hidden_size])], axis=1)
-            initial_state = tf.zeros(self.decoder_hidden_size)
+            initial_state = tf.zeros([self.batch_size, self.decoder_hidden_size])
 
         return finished_tensor, initial_input, initial_state
 
@@ -71,6 +71,14 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
     @property
     def batch_size(self):
         return self._batch_size
+
+    @property
+    def output_size(self):
+        return self.decoder_hidden_size
+
+    @property
+    def output_dtype(self):
+        return tf.float32
 
 
 
