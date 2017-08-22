@@ -23,7 +23,7 @@ class MT_Model(object):
             self.translation_embedding_matrix = tf.get_variable("Translation_embedding", shape=[self.translation_vocab_size, self.input_size])
 
     def _add_placeholders(self):
-        self.encoded_sequence_placeholder = tf.placeholder(shape=[None, self.max_seq_len, self.input_size], dtype=tf.float32)
+        self.encoded_sequence_placeholder = tf.placeholder(shape=[None, self.max_seq_encoder_len, self.input_size], dtype=tf.float32)
         self.labels_placeholder = tf.placeholder(shape=[None, self.max_decoder_seq_len], dtype=tf.float32)
         self.learning_rate_placeholder = tf.placeholder(shape=(), dtype=tf.float32)
 
