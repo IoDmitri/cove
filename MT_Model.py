@@ -43,10 +43,10 @@ class MT_Model(object):
                                                                    for _ in range(self.layers)])
 
             seq_len = tf.reduce_sum(tf.sign(tf.reduce_sum(self.encoded_sequence_placeholder, axis=2)), axis=1)
-            fw_encoding, bw_encoding, _ = tf.nn.bidirectional_dynamic_rnn(
+            (fw_encoding, bw_encoding), _ = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=forward_lstm_cells,
                 cell_bw=backward_lstm_cells,
-                sequence_length=seq_len,
+                sequence_length=tf.cast(seq_len, tf.int32),
                 inputs=self.encoded_sequence_placeholder,
                 initial_state_fw=forward_lstm_cells.zero_state(self.batch_size, dtype=tf.float32),
                 initial_state_bw=backward_lstm_cells.zero_state(self.batch_size, dtype=tf.float32)
