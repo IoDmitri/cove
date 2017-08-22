@@ -33,9 +33,10 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
     def initialize(self, name=None):
         with tf.variable_scope(name or "initialize"):
             finished_tensor = tf.zeros([self.batch_size], dtype=tf.bool)
-            initial_input = tf.tile(
-                tf.nn.embedding_lookup(self.translation_embedding_matrix, self.sos_id), [self.batch_size])
-            initial_input = tf.concat([initial_input, tf.zeros(2 * self.decoder_hidden_size)], axis=1)
+            sos_embedding = tf.reshape(tf.nn.embedding_lookup(self.translation_embedding_matrix, self.sos_id), [1, -1])
+            initial_input = tf.tile(sos_embedding, [self.batch_size, 1])
+            print(f"initial_input_lookedup - {initial_input}")
+            initial_input = tf.concat([initial_input, tf.zeros([self.batch_size, self.decoder_hidden_size])], axis=1)
             initial_state = tf.zeros(self.decoder_hidden_size)
 
         return finished_tensor, initial_input, initial_state
