@@ -43,7 +43,8 @@ class MT_Model(object):
             fw_encoding, bw_encoding, _ = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=forward_lstm_cells,
                 cell_bw=backward_lstm_cells,
-                inputs=self.encoded_sequence_placeholder
+                inputs=self.encoded_sequence_placeholder,
+                dtype=tf.float32
             )
 
         return tf.concat([fw_encoding, bw_encoding], axis=2)
