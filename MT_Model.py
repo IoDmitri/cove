@@ -36,15 +36,20 @@ class MT_Model(object):
     def _run_lstm_encoder(self):
         with tf.variable_scope("mt_lstm"):
             with tf.variable_scope("forwards"):
-                forward_lstm_cells = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size) for _ in range(self.layers)])
+                forward_lstm_cells = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size)
+                                                                  for _ in range(self.layers)])
             with tf.variable_scope("backwards"):
-                backward_lstm_cells = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size) for _ in range(self.layers)])
+                backward_lstm_cells = tf.nn.rnn_cell.MultiRNNCell([tf.nn.rnn_cell.LSTMCell(self.hidden_size)
+                                                                   for _ in range(self.layers)])
 
+            seq_len = tf.reduce_sum(tf.sign(tf.reduce_sum(self.encoded_sequence_placeholder, axis=2)), axis=1)
             fw_encoding, bw_encoding, _ = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=forward_lstm_cells,
                 cell_bw=backward_lstm_cells,
+                sequence_length=seq_len,
                 inputs=self.encoded_sequence_placeholder,
-                dtype=tf.float32
+                initial_state_fw=forward_lstm_cells.zero_state(self.batch_size, dtype=tf.float32),
+                initial_state_bw=backward_lstm_cells.zero_state(self.batch_size, dtype=tf.float32)
             )
 
         return tf.concat([fw_encoding, bw_encoding], axis=2)
