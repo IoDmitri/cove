@@ -75,9 +75,10 @@ def main(argv=None):
         initial_sequences = [[initial_seq_to_number[token] for token in seq] for seq in initial_sequences]
         initial_targets = [[translation_seq_to_number[token] for token in seq] for seq in initial_targets]
 
-        random_embedding_matrix = np.random.rand(len(choices), FLAGS.enc_h)
-        initial_sequences = random_embedding_matrix[initial_sequences]
+        random_embedding_matrix = np.random.rand(len(choices) + 1, FLAGS.enc_h)
+        initial_sequences = np.array(initial_sequences)
 
+        initial_sequences = random_embedding_matrix[initial_sequences, :]
         data = (initial_sequences, initial_targets)
 
 
