@@ -60,7 +60,7 @@ class MT_Model(object):
                              sos_id=self.sos_id, eos_id=self.eos_id, decoder_hidden_size=self.decoder_output_size,
                              encoder_hidden_size=self.hidden_size)
 
-        decoder_outputs, _, seq_lengths = tf.contrib.seq2seq.dynamic_decode(decoder, inpute_finished=True,
+        decoder_outputs, _, seq_lengths = tf.contrib.seq2seq.dynamic_decode(decoder, impute_finished=True,
                                                                             maximum_iterations=self.max_decoder_seq_len)
         return decoder_outputs, seq_lengths
 
