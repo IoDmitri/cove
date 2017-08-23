@@ -6,6 +6,7 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
         self.encoder_outputs = encoder_outputs
         self.encoder_hidden_size = encoder_hidden_size
         self.decoder_hidden_size = decoder_hidden_size
+        self.translation_vocab_size = translation_vocab_size
         self.translation_embedding_matrix = translation_embedding_matrix
         self.sos_id = sos_id
         self.eos_id = eos_id
@@ -24,10 +25,6 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
 
         encoder_outputs = tf.transpose(encoder_outputs, [0,2,1])
         self.encoder_output_projected_cache = tf.einsum("ij,ajk->aik", self.W2, encoder_outputs)
-        print(f"encoder_output_cache - {self.encoder_output_projected_cache}")
-        # self.encoder_output_projected_cache = tf.reshape(tf.matmul(self.W2, tf.reshape(encoder_outputs, [-1, 2*encoder_hidden_size]),
-        #                                                                     transpose_b=True), [self.batch_size, -1,
-        #                                                                                         decoder_hidden_size])
 
         with tf.variable_scope("h_dec_lstm"):
             self.h_dec_lstm_cell = tf.nn.rnn_cell.MultiRNNCell(
@@ -48,18 +45,18 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
         return finished_tensor, initial_input, self.h_dec_lstm_cell.zero_state(self.batch_size, dtype=tf.float32)
 
     def step(self, time, inputs, state, name=None):
-        print(f"inputs - {inputs}")
+        # print(f"inputs - {inputs}")
         with tf.variable_scope(name or "step"):
             decoder_output, lstm_state = self.h_dec_lstm_cell(inputs, state)
-            print(f"decoder_output - {decoder_output}")
+            # print(f"decoder_output - {decoder_output}")
             decoder_query = tf.nn.bias_add(tf.matmul(decoder_output, self.W1), self.B1, name="decoder_query")
-            print(f"lstm_state - {lstm_state}")
-            print(f"decoder_query - {decoder_query}")
+            # print(f"lstm_state - {lstm_state}")
+            # print(f"decoder_query - {decoder_query}")
             decoder_query = tf.expand_dims(decoder_query, axis=2)
             a = tf.nn.softmax(tf.matmul(self.encoder_outputs, decoder_query, name="a"))
-            print(f"a - {a}")
-            print(f"encoder_output_projected_cache - {self.encoder_output_projected_cache}")
-            print(f"matmul - {tf.matmul(self.encoder_output_projected_cache, a)}")
+            # print(f"a - {a}")
+            # print(f"encoder_output_projected_cache - {self.encoder_output_projected_cache}")
+            # print(f"matmul - {tf.matmul(self.encoder_output_projected_cache, a)}")
             decoder_output_context_adjusted = tf.concat([
                 tf.nn.tanh(tf.nn.bias_add(tf.squeeze(tf.matmul(self.encoder_output_projected_cache, a, name="inner_tanh")),
                                           self.B2)),
@@ -81,7 +78,7 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
             # print(f"context_adjusted - {tf.concat([translation_embedding, decoder_output_context_adjusted], axis=1)}")
             # print(f"finished - {finished}")
         return (
-            decoder_output,
+            translation_vocab_logits,
             lstm_state,
             tf.concat([translation_embedding, decoder_output_context_adjusted], axis=1, name="return_concat"),
             finished
@@ -93,8 +90,8 @@ class NMTDecoder(tf.contrib.seq2seq.Decoder):
 
     @property
     def output_size(self):
-        return self.decoder_hidden_size
-
+        #return self.decoder_hidden_size
+        return self.translation_vocab_size
     @property
     def output_dtype(self):
         return tf.float32
