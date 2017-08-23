@@ -24,7 +24,7 @@ class MT_Model(object):
 
     def _add_placeholders(self):
         self.encoded_sequence_placeholder = tf.placeholder(shape=[None, self.max_seq_encoder_len, self.input_size], dtype=tf.float32)
-        self.labels_placeholder = tf.placeholder(shape=[None, self.max_decoder_seq_len], dtype=tf.float32)
+        self.labels_placeholder = tf.placeholder(shape=[None, self.max_decoder_seq_len], dtype=tf.int32)
         self.learning_rate_placeholder = tf.placeholder(shape=(), dtype=tf.float32)
 
     def _build_model(self):
@@ -65,8 +65,8 @@ class MT_Model(object):
         return decoder_outputs, seq_lengths
 
     def _add_loss(self, translated_sequence):
-        loss = tf.contrib.seq2seq.sequence_loss(logits=translated_sequence.rnn_output, targets=self.labels_placeholder,
-                                                weights=tf.sign(self.labels_placeholder))
+        loss = tf.contrib.seq2seq.sequence_loss(logits=translated_sequence, targets=self.labels_placeholder,
+                                                weights=tf.sign(tf.cast(self.labels_placeholder, tf.float32)))
         return loss
 
     def _add_train_step(self, loss_op):
