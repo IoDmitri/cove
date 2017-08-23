@@ -86,11 +86,11 @@ def main(argv=None):
     model = MT_Model(translation_vocab_size=translation_vocab_size, max_seq_encoder_len=10, max_seq_decoder_len=10,
                      sos_id=1, eos_id=2)
 
-    with tf.Session as sess:
+    with tf.Session() as sess:
         start = tf.global_variables_initializer()
         sess.run(start)
 
-        for epoch in FLAGS.epochs:
+        for epoch in range(FLAGS.epochs):
             train_loss = _run_epoch(model, data, sess, FLAGS.batch_size, model.train_op)
             print(f"epoch - {epoch}")
             print(f"train_loss for epoch - {train_loss}")
