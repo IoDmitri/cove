@@ -14,6 +14,6 @@ def data_iterator(data, batch_size):
             batch_deficiency = batch_size - len(seq)
 
             seq = np.pad(seq, [(0, batch_deficiency), (0,0), (0,0)], "constant")
-            labels = np.pad(labels, [(0, batch_deficiency), (0,0), (0,0)], "constant")
+            labels = np.pad(labels, [(0, batch_deficiency), (0,0)], "constant")
 
         yield seq, labels
